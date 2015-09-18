@@ -14,26 +14,8 @@ class TTTGame
       [2,4,6]
     ]
   end
-
-  def set_player
-    if body[:player_X] == nil
-      body[:player_X] = playername
-    elsif body[:player_O] == nil
-      body[:player_O] = playername
-    else
-      puts "already full"
-    end
-  end
 end
 
-
-# Request:
-# {
-#   "player_X_name": "String containing the name of player X",
-#   "player_O_name": "String containing the name of player O"
-# }
-# Response:
-# Status code: 201
 # Body:
 # { "status": "ok",
 #   "board": { "state": "playing",
@@ -50,6 +32,7 @@ end
 #          }
 # }
 # require 'sinatra'
+
 require 'webrick'
 require 'json'
 
@@ -64,35 +47,101 @@ class Game < WEBrick::HTTPServlet::AbstractServlet
       elsif body["player_O"] == 0
         body["player_O"] = "#{request.query["playername"]}"
       else
-##TODO send diff response??? TODO###
+        ##TODO send diff response??? TODO###
+        ##TODO what tells the game to start (go to /move)? TODO###
         puts "already full"
       end
     File.write(JSON_FILE, body.to_json)
 
     board = JSON.parse(File.read("board.json"))
-    puts board
     response.status = 201
     response.body = board.to_json
   end
 end
 
+class Move
+  def do_POST(request, response)
+
+## TODO can this be used to modify board?
+## TODO need return for invalid move
+  def make_move
+    @cells.map do |cell|
+      if cell == @p1_choice
+        @cells[@p1_choice] = :X
+        return true
+      end
+    end
+  end
+
+## TODO modify for use on winner tally (incorporate with winner?)
+  def tally
+    @win2.each do |inner|
+      inner.map! do |value|
+        if(value == @p1_choice)
+          value = :X
+        elsif(value == @p2_choice)
+          value = :O
+        elsif(value == @ai_choice)
+          value = :C
+        else
+          value
+        end
+      end
+    end
+  end
+
+## TODO modify for use // need return for winner?
+  def winner
+    @win2.each do |inner|
+      if inner == [:X,:X,:X]
+        puts "#{@name1} wins!"
+        play_again
+      elsif inner == [:O,:O,:O]
+        puts "#{@name2} wins!"
+        play_again
+      elsif inner == [:C,:C,:C]
+        puts "Computer wins!"
+        play_again
+      end
+    end
+  end
+
+# NOTE: need player name and position from URL
+# Request:
+# X player moves to position 0
+# Request:
+# {
+#   "player": "X",
+#   "position": "0"
+# }
+# If the move is valid (the space is currently unoccupied)
+# Status code: 200
+# Body:
+#  {
+#    "status": "ok",
+#    "board": { "state": "playing",
+#
+# NOTE: The board should be updated with an X or an O depending on which player made the move.
+# NOTE: The state should be updated with one of these values:
+# playing - the game is ongoing
+# tie - the game is a tie
+# player X wins - player X has won
+# player Y wins - player Y has won
+#
+# If the move is invalid (the space is currently occupied)
+# Status code: 409
+#  {
+#    "status": "invalid",
+#    "reason": "Already an (X or O) at this space",
+#    "board": { "state": "playing",
+  end
+end
+
+
 server = WEBrick::HTTPServer.new(Port:3027)
-server.mount "/", Game
+server.mount "/game", Game
+server.mount "/move", Move
 
 trap("INT") { server.shutdown }
 
 server.start
-
-  # Creates a new game with a blank board.
-  # take player names, assign them to X/O
-
-  # @people  = File.exist?("people.txt") ? File.readlines("people.txt") : []
-  # result =  (condition)              ?      if true                 : if false
-
-  # return body hash of hash of hash
-  # body = board
-
-
-# Makes a move for a specific player
-# post "/move" do
-# end
