@@ -1,3 +1,8 @@
+## NOTES
+enable CORS because your js and ruby apps are on separate domain/ips.
+For Sinatra, I believe you’ll need to do something like:
+`headers 'Access-Control-Allow-Origin' => '*’` (edited)
+
 ## WORKING FILE
 body = { "state": "playing",
      "positions": { "0": " ",

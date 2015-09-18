@@ -1,4 +1,5 @@
-{ "status": "ok",
+{ "current_player": "choosing_player",
+  "status": "ok",
   "board": { "state": "playing",
             "positions": { "0": " ",
                            "1": " ",

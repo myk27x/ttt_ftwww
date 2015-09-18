@@ -3,6 +3,22 @@ class TTTGame
   def initialize
     @cells = [0,1,2,3,4,5,6,7,8]
 
+    @board = { "current_player": "choosing_player",
+             "status": "ok",
+             "board": { "state": "playing",
+                        "positions": { "0": @cells[0],
+                                       "1": @cells[1],
+                                       "2": @cells[2],
+                                       "3": @cells[3],
+                                       "4": @cells[4],
+                                       "5": @cells[5],
+                                       "6": @cells[6],
+                                       "7": @cells[7],
+                                       "8": @cells[8]
+                                     }
+                      }
+            }
+
     @win2 = [
       [0,1,2],
       [3,4,5],
@@ -16,23 +32,7 @@ class TTTGame
   end
 end
 
-# Body:
-# { "status": "ok",
-#   "board": { "state": "playing",
-#   "positions": { "0": " ",
-#                  "1": " ",
-#                  "2": " ",
-#                  "3": " ",
-#                  "4": " ",
-#                  "5": " ",
-#                  "6": " ",
-#                  "7": " ",
-#                  "8": " "
-#                }
-#          }
-# }
 # require 'sinatra'
-
 require 'webrick'
 require 'json'
 
@@ -41,16 +41,20 @@ JSON_FILE = File.dirname(__FILE__) + "/players.json"
 class Game < WEBrick::HTTPServlet::AbstractServlet
   def do_POST(request, response)
     TTTGame.new
+
+    ##TODO should players be class instances??? TODO##
     body = JSON.parse(File.read("players.json"))
       if body["player_X"] == 0
         body["player_X"] = "#{request.query["playername"]}"
       elsif body["player_O"] == 0
         body["player_O"] = "#{request.query["playername"]}"
       else
+
         ##TODO send diff response??? TODO###
-        ##TODO what tells the game to start (go to /move)? TODO###
         puts "already full"
       end
+      ##TODO what tells the game to start (go to /move)? TODO###
+
     File.write(JSON_FILE, body.to_json)
 
     board = JSON.parse(File.read("board.json"))
@@ -62,8 +66,40 @@ end
 class Move
   def do_POST(request, response)
 
-## TODO can this be used to modify board?
-## TODO need return for invalid move
+    # Request:
+    # {
+    #   "player": "X",
+    #   "position": "0"
+    # }
+
+    # If the move is invalid (the space is currently occupied)
+    # Status code: 409
+    #  {
+    #    "status": "invalid",
+    #    "reason": "Already an (X or O) at this space",
+    #    "board": { "state": "playing", etc.
+    ##TODO needs input variables from client TODO##
+
+    @board = {
+      "current_player": choosing_player,
+      "status": status,
+      "board": { "state": state,
+                 "positions": { "0": @cells[0],
+                                "1": @cells[1],
+                                "2": @cells[2],
+                                "3": @cells[3],
+                                "4": @cells[4],
+                                "5": @cells[5],
+                                "6": @cells[6],
+                                "7": @cells[7],
+                                "8": @cells[8]
+                              }
+                }
+  }
+
+
+  ## TODO can this be used to modify board?
+  ## TODO need return for invalid move
   def make_move
     @cells.map do |cell|
       if cell == @p1_choice
@@ -123,17 +159,12 @@ class Move
 #
 # NOTE: The board should be updated with an X or an O depending on which player made the move.
 # NOTE: The state should be updated with one of these values:
+
 # playing - the game is ongoing
 # tie - the game is a tie
 # player X wins - player X has won
 # player Y wins - player Y has won
 #
-# If the move is invalid (the space is currently occupied)
-# Status code: 409
-#  {
-#    "status": "invalid",
-#    "reason": "Already an (X or O) at this space",
-#    "board": { "state": "playing",
   end
 end
 
