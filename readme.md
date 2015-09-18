@@ -1,4 +1,35 @@
-API
+## WORKING FILE
+body = { "state": "playing",
+     "positions": { "0": " ",
+                    "1": " ",
+                    "2": " ",
+                    "3": " ",
+                    "4": " ",
+                    "5": " ",
+                    "6": " ",
+                    "7": " ",
+                    "8": " "
+                  }
+       }
+
+position_choice = :"1"
+player_symbol = "X"
+
+hashes = body.each do |key, value|
+  if key == :"positions"
+    choices = value
+    choices.select do |choice|
+      if choice == position_choice
+        choices[choice] = player_symbol
+      end
+    end
+  end
+end
+
+
+p hashes
+
+## API
 
 This is a suggested API, you may find that something else works better for you. It may also not be entirely complete, you will likely need to add additional methods to complete the game.
 
@@ -35,7 +66,7 @@ Body:
                          }
          }
 }
-POST /move
+## POST /move
 
 Behavior
 
