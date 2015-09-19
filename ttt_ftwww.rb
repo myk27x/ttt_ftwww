@@ -23,14 +23,14 @@ class TTTGame
       "status": status,
       "board": { "state": state,
         "positions": { "0": @cells[0],
-          "1": @cells[1],
-          "2": @cells[2],
-          "3": @cells[3],
-          "4": @cells[4],
-          "5": @cells[5],
-          "6": @cells[6],
-          "7": @cells[7],
-          "8": @cells[8]
+                       "1": @cells[1],
+                       "2": @cells[2],
+                       "3": @cells[3],
+                       "4": @cells[4],
+                       "5": @cells[5],
+                       "6": @cells[6],
+                       "7": @cells[7],
+                       "8": @cells[8]
         }
       }
     }
@@ -57,7 +57,7 @@ class TTTGame
         # player Y wins - player Y has won #NOTE should this include name???
       when
         @cells.all? do |cell|
-          cell == " "
+          cell != " "
           status = "tie"
         end
       else
