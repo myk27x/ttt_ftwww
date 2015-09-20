@@ -10,17 +10,17 @@ class TTTGame
       "status": "status",
       "board": { "state": "state",
         "positions": { "0": @cells[0],
-          "1": @cells[1],
-          "2": @cells[2],
-          "3": @cells[3],
-          "4": @cells[4],
-          "5": @cells[5],
-          "6": @cells[6],
-          "7": @cells[7],
-          "8": @cells[8]
+                       "1": @cells[1],
+                       "2": @cells[2],
+                       "3": @cells[3],
+                       "4": @cells[4],
+                       "5": @cells[5],
+                       "6": @cells[6],
+                       "7": @cells[7],
+                       "8": @cells[8]
+                     }
+               }
         }
-      }
-    }
 
     @win2 = [
       [0,1,2],
@@ -77,26 +77,10 @@ class TTTGame
           state = "tie"
         end
       else
-    @win2.each do |inner|
-      case
-      when
-        inner == [:X,:X,:X]
-        state = "Player X wins!"
-        # player X wins - player X has won #NOTE should this include name???
-      when
-        inner == [:O,:O,:O]
-        state = "Player O wins!"
-        # player Y wins - player Y has won #NOTE should this include name???
-      when
-        @cells.all? do |cell|
-          cell != " "
-          state = "tie"
-        end
-      else
         state = "playing"
       end
-  #   end
-  # end
+    end
+  end
 
   def update_move(position, player_symbol)
     # check if move is valid
